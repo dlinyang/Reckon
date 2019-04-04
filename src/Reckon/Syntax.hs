@@ -12,8 +12,8 @@ data Stmt
 data Expr 
     = Var Name --bound variable
     | Literal Lit --element
-    | List [Expr]
-    | Type Type
+    | ListE [Expr]
+    | TypeE Type
     | Op PrimeFun Expr Expr -- axiom
     | Ap Expr Expr --application
     | Lambda [Name] Expr -- lambda expression

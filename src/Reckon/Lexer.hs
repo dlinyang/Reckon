@@ -46,7 +46,7 @@ float :: Parser Float
 float = lexeme L.float
 
 reservedWords' :: [String]
-reservedWords' = ["let","if","then","else","case","of","abstract","concrete","where","do","Cat","import","module"]
+reservedWords' = ["let","if","then","else","case","of","abstract","concrete","where","do","Cat","import","export","module","syntax","foreinge","hiding"]
 
 reservedWords :: String -> Parser ()
 reservedWords w = (lexeme.try) (string w *> notFollowedBy alphaNumChar)
@@ -57,7 +57,8 @@ opChars = ":!#$%*+./<=>/@\\^|-~"
 opLetter = oneOf opChars
 
 reservedOp' :: [String]
-reservedOp' = [":",".","\\","->","=>","=",":=","|",","]
+reservedOp' = [":",".","\\","->","=>","=",":=","|",",",
+               "+","-","*","/","%"]
 
 cmmnt :: [String]
 cmmnt = ["--","{-","-}"]

@@ -38,6 +38,9 @@ variable = Var <$> identifier <?> "variable"
 operator :: Parser Expr
 operator = Var <$> symbolicOp
 
+infixFun :: Parser Expr
+infixFun = Var <$> identifier 
+
 application :: Parser Expr
 application = do 
   var <- variable
