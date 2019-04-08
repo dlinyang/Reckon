@@ -46,7 +46,7 @@ float :: Parser Float
 float = lexeme L.float
 
 reservedWords' :: [String]
-reservedWords' = ["let","if","then","else","case","of","abstract","concrete","where","do","Cat","import","export","module","syntax","foreinge","hiding"]
+reservedWords' = ["let","if","then","else","case","of","abstract","concrete","where","do","Cat","import","export","module","syntax","foreign","hiding"]
 
 reservedWords :: String -> Parser ()
 reservedWords w = (lexeme.try) (string w *> notFollowedBy alphaNumChar)
@@ -73,7 +73,6 @@ symbolicOp = (lexeme . try ) (p >>= check )
         check x = if x `elem` (reservedOp' ++ cmmnt)
                     then fail $ show x ++ "is not a valid operator " 
                     else return x
-
 
 identifier :: Parser String
 identifier = (lexeme . try) (p >>= check)

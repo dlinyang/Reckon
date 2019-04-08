@@ -38,9 +38,9 @@ typeDecl = do
   ty <- rtype
   return $ TypeDecl name ty
 
-rtype = parens rtype
+rtype = try rtypet --bug:wait fix
     <|> rtypec
-    <|> rtypet
+    <|> parens rtype
     <?> "type"
 
 rtypec = TC <$> identifier
@@ -51,15 +51,16 @@ rtypet = do
   t2 <- rtypec
   return $ TT t1 t2
 
+
 modDecl :: Parser Decl
 modDecl = modDef
       <|> modImp
+      <|> modExp
 
 modDef :: Parser Decl
 modDef = do
   reservedWords "module"
   name <- identifier
-  reservedWords "where"
   return $ ModuleDecl (MDef name)
 
 modImp :: Parser Decl
@@ -67,3 +68,9 @@ modImp = do
   reservedWords "import"
   name <- identifier
   return $ ModuleDecl (MImp name)
+
+modExp :: Parser Decl
+modExp = do
+  reservedWords "export"
+  names <- parens (many identifier)
+  return $ ModuleDecl (MExp names)

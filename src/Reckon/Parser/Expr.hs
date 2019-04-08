@@ -27,7 +27,7 @@ term = try floating
 --   <|> try rstring
    <|> try list
    <|> variable
-   <|> parens operator
+   <|> try (parens operator)
    <|> parens expr
    <?> "terms" 
 
@@ -52,7 +52,7 @@ infixApp = do
   var1 <- term
   op <- operator
   var2 <- term
-  return $ Ap (Ap var1 op) var2
+  return $ Ap (Ap op var1) var2
 
 lambda :: Parser Expr --lambda expresion
 lambda = do
@@ -80,13 +80,13 @@ ifExpr = do
   exprc <- expr
   return $ If expra exprb exprc
 
-parttern :: Parser Expr
+parttern :: Parser Expr --bugs:multy indent 
 parttern = do
-  reservedWords "case"
   (expra,exprs) <-  L.nonIndented scn (L.indentBlock sc p)
   return $ Parttern expra exprs
   where
     p = do
+      reservedWords "case"
       body <- term
       reservedOp "of"
       return (L.IndentMany Nothing (return  . (body,)) parttern')

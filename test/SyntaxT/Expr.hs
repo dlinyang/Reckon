@@ -1,11 +1,11 @@
 module SyntaxT.Expr where 
 
-import Test.Hspec
-import Test.QuickCheck
-import Control.Exception (evaluate)
+import Reckon.Parser.Expr
+import Reckon.Syntax
+import Text.Megaparsec
 
-varTest = it "return variable asr" $do
-    (testParse variable "x") `shouldBe` (Var "x")
+varTest = parseTest variable "x"
 
-partternTest = it "return layout case expresion ast" $do
-    (testParse parttern "case x of \n\t x => x ") `shouldBe` (Parttern (Var "x") [(Var"x",Var"x")])
+opTest = parseTest operator ">="
+
+partternTest = parseTest parttern "case x of\n\tx >= 1 => 1\n\tx >= 2 => 2"

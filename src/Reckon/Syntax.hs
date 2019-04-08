@@ -35,7 +35,7 @@ data Lit
 data PrimeFun
     = Cons |App | Head | Tail -- list operator
     | Def | Ty -- (=) :
-    | Plus | Minus | Times | Divide -- 
+    | Plus | Minus | Times | Divide | Mod -- 
     | RAnd | ROr | RNot |REq -- 
     deriving (Eq,Ord,Show)
 
@@ -60,4 +60,5 @@ data Cons
 data Modecl
     = MDef Name
     | MImp Name
+    | MExp [Name]
     deriving (Eq,Ord,Show)
