@@ -57,8 +57,8 @@ opChars = ":!#$%*+./<=>/@\\^|-~"
 opLetter = oneOf opChars
 
 reservedOp' :: [String]
-reservedOp' = [":",".","\\","->","=>","=",":=","|",",",
-               "+","-","*","/","%"]
+reservedOp' = [":",".","\\","->","=>","=",":=","|",",", --
+               "+","-","*","/","%"]                     --
 
 cmmnt :: [String]
 cmmnt = ["--","{-","-}"]
@@ -71,7 +71,7 @@ symbolicOp = (lexeme . try ) (p >>= check )
     where 
         p       = (:) <$> opLetter <*> many  opLetter
         check x = if x `elem` (reservedOp' ++ cmmnt)
-                    then fail $ show x ++ "is not a valid operator " 
+                    then fail $ show x ++ "is not a valid operator" 
                     else return x
 
 identifier :: Parser String
