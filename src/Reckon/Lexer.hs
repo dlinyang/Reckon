@@ -17,9 +17,7 @@ lineComment = L.skipLineComment "--"
 blockComment = L.skipBlockComment "{-" "-}"
 
 sc :: Parser ()
-sc = L.space (void $ takeWhile1P Nothing f) lineComment blockComment
-    where
-        f x = x == ' ' || x == '\t'
+sc = L.space (void $ some (char ' ' <|> char '\t')) lineComment blockComment
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme sc
@@ -35,6 +33,9 @@ brackets = between (symbol "[") (symbol "]")
 
 dquote :: Parser a -> Parser a
 dquote = between (symbol "\"") (symbol "\"")
+
+accent :: Parser a -> Parser a
+accent = between (symbol "`") (symbol "`")
 
 charLit :: Parser Char
 charLit = between (symbol "\'") (symbol "\'") L.charLiteral

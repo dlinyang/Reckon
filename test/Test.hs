@@ -1,12 +1,15 @@
 module Main where
 
+import Test.Hspec
+import Test.QuickCheck
+import Control.Exception (evaluate)
 import SyntaxT.Expr
 
 main :: IO ()
-main = do
+main = hspec $ do
     varTest
 
-    opTest
+--    opTest
     
-    partternTest
+--    partternTest
     

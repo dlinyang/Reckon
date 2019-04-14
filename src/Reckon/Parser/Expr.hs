@@ -7,11 +7,11 @@ import Reckon.Lexer
 import Reckon.Parser.Data
 import Text.Megaparsec
 import qualified Text.Megaparsec.Char.Lexer as L
+import Control.Monad.Combinators.Expr
 
 
 expr :: Parser Expr
 expr = try application
-   <|> try infixApp
    <|> term
    <|> lambda
    <|> letExpr
@@ -38,21 +38,43 @@ variable = Var <$> identifier <?> "variable"
 operator :: Parser Expr
 operator = Var <$> symbolicOp
 
+prefixFun :: Parser Expr
+prefixFun = variable
+        <|> parens operator
+
 infixFun :: Parser Expr
-infixFun = Var <$> identifier 
+infixFun = operator
+       <|> accent variable 
 
 application :: Parser Expr
-application = do 
-  var <- variable
-  fa <- expr
-  return $ Ap var fa
+application = try prefixApp
+          <|> try infixApp
+
+prefixApp :: Parser Expr
+prefixApp = do 
+  fun <- prefixFun
+  args <- some term -- at least one
+  return $ curry fun args
+  where 
+    curry fun (arg:args) = curry' (Ap fun arg) args
+    curry' ap [] = ap
+    curry' ap (arg:args) = curry' (Ap ap arg) args
 
 infixApp :: Parser Expr
-infixApp = do
-  var1 <- term
-  op <- operator
-  var2 <- term
-  return $ Ap (Ap op var1) var2
+infixApp = makeExprParser term operatorTable
+
+operatorTable :: [[Operator Parser Expr]]
+operatorTable =[(map infixlOp oppl) ++ [InfixL (infixFun' <$> infixFun)]]
+
+oppl = [(Plus,"+"),(Minus,"-"),(Times,"*"),(Divide,"/"),(Mod,"%")]
+
+infixlOp (opn,opc)  = InfixL (binary opn opc)
+
+binary opn opc = Op <$> primeFun opn opc 
+
+primeFun opname opchar= opname <$ reservedOp opchar
+
+infixFun' op x  = Ap (Ap op x) 
 
 lambda :: Parser Expr --lambda expresion
 lambda = do

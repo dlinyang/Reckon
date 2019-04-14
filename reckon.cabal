@@ -28,5 +28,6 @@ test-suite reckon-tests
   hs-source-dirs:   test,src
   Main-is:          Test.hs
   other-modules:    Paths_reckon
-  build-depends:    base >=4.11 && <4.12, mtl >=2.2 && <2.3, containers >=0.5 && <0.6,parser-combinators, megaparsec >= 7.0,llvm-hs,hspec,QuickCheck,megaparsec
+  build-depends:    base >=4.11 && <4.12, mtl >=2.2 && <2.3, containers >=0.5 && <0.6,parser-combinators, megaparsec >= 7.0,llvm-hs,
+                    hspec,hspec-megaparsec,QuickCheck,megaparsec
   default-language: Haskell2010

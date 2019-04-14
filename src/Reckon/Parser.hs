@@ -26,6 +26,6 @@ topLevel = many $ do
   stmt <- statement
   return stmt
 
-parseExpr s = parse  (contens expr) "<stdin>" s 
+parseStatement s = parse  (contens statement) "<stdin>" s 
 
 parseTopLevel s = parse  (contens topLevel) "<stdin>" s

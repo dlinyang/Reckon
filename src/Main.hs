@@ -8,7 +8,7 @@ import Reckon.Parser
 
 process :: String -> IO ()
 process line = do
-  let res = parseTopLevel line
+  let res = parseStatement line
   case res of
     Left err -> putStr (errorBundlePretty err)
     Right ex -> print ex
