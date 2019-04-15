@@ -21,14 +21,14 @@ instance MetaCat Cat where
     cod Morphism x y = y
 
 class Cartesian a where
-    (><) :: b -> c -> a
+    (×) :: b -> c -> a
     p1   :: a -> b
     p2   :: a -> c
 
 cartesianProduct a b = (a,b)
 
 instance Cartesian Cat where
-    (><) = cartesianProduct
+    (×) = cartesianProduct
     p1 = fst 
     p2 = snd
 

@@ -7,6 +7,7 @@ import Reckon.Lexer
 import Reckon.Parser.Expr
 import Text.Megaparsec 
 import qualified Text.Megaparsec.Char.Lexer as L
+import Control.Monad.Combinators.Expr
 
 declare :: Parser Decl --parse declare
 declare = try funDecl
@@ -38,19 +39,12 @@ typeDecl = do
   ty <- rtype
   return $ TypeDecl name ty
 
-rtype = try rtypet --bug:wait fix
-    <|> rtypec
-    <|> parens rtype
-    <?> "type"
+rtype = makeExprParser rtypeTerm [[InfixL (TT <$ reservedOp "->")]]
+
+rtypeTerm = rtypec
+     <|> parens rtype
 
 rtypec = TC <$> identifier
-
-rtypet = do
-  t1 <- rtypec
-  reservedOp "->"
-  t2 <- rtypec
-  return $ TT t1 t2
-
 
 modDecl :: Parser Decl
 modDecl = modDef

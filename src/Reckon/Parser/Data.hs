@@ -6,29 +6,29 @@ import Text.Megaparsec
 
 --parse the integer
 int :: Parser Expr 
-int = Literal  . RInteger <$> integer
+int = Literal  <$> int' 
 
 int' :: Parser Lit
-int' = RInteger <$> integer
+int' = RInteger <$> integer <?> "int"
 
 --parse the float
 floating :: Parser Expr
-floating = Literal  . RFloat <$> float
+floating = Literal  <$> floating'
 
 floating' :: Parser Lit
-floating' = RFloat <$> float
+floating' = RFloat <$> float <?> "float"
 
 rchar :: Parser Expr
-rchar = Literal . RChar <$> charLit
+rchar = Literal <$> rchar'
 
 rchar' :: Parser Lit
-rchar' = RChar <$> charLit
-
-rstring' :: Parser Lit 
-rstring' = RString <$> stringLit
+rchar' = RChar <$> charLit <?> "char"
 
 rstring :: Parser Expr
-rstring = Literal . RString <$> stringLit <?> "string"
+rstring = Literal <$> rstring'
+
+rstring' :: Parser Lit 
+rstring' = RString <$> stringLit <?> "string"
 
 lit :: Parser Lit
 lit  = try int'

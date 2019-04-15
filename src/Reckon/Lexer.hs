@@ -48,7 +48,9 @@ float :: Parser Float
 float = lexeme L.float
 
 reservedWords' :: [String]
-reservedWords' = ["let","if","then","else","case","of","abstract","concrete","where","do","Cat","import","export","module","syntax","foreign","hiding"]
+reservedWords' = ["let","if","then","else","case","of","where","do",
+                  "abstract","concrete","Cat",
+                  "import","export","module","hiding","syntax","foreign"]
 
 reservedWords :: String -> Parser ()
 reservedWords w = (lexeme.try) (string w *> notFollowedBy alphaNumChar)

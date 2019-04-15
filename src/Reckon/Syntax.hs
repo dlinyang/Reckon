@@ -49,7 +49,6 @@ data Decl
 data Type 
     = TC Name
     | TT Type Type
-    | TN [Type]
     deriving (Eq,Ord,Show)
 
 data Cons

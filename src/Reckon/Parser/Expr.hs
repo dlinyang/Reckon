@@ -64,9 +64,9 @@ infixApp :: Parser Expr
 infixApp = makeExprParser term operatorTable
 
 operatorTable :: [[Operator Parser Expr]]
-operatorTable =[(map infixlOp oppl) ++ [InfixL (infixFun' <$> infixFun)]]
+operatorTable =[map infixlOp opll) ++ [InfixL (infixFun' <$> infixFun)]]
 
-oppl = [(Plus,"+"),(Minus,"-"),(Times,"*"),(Divide,"/"),(Mod,"%")]
+opll = [(Plus,"+"),(Minus,"-"),(Times,"*"),(Divide,"/"),(Mod,"%")] -- left associated operators list
 
 infixlOp (opn,opc)  = InfixL (binary opn opc)
 
