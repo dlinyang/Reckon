@@ -2,6 +2,7 @@ module Reckon.Lexer where
 
 import Control.Monad (void)
 import Control.Monad.Combinators
+import Control.Monad.Combinators.Expr
 import Data.Void
 import Data.Char
 import Text.Megaparsec
@@ -31,14 +32,14 @@ parens = between (symbol "(") (symbol ")")
 brackets :: Parser a -> Parser a
 brackets = between (symbol "[") (symbol "]")
 
-dquote :: Parser a -> Parser a
-dquote = between (symbol "\"") (symbol "\"")
-
 accent :: Parser a -> Parser a
 accent = between (symbol "`") (symbol "`")
 
 charLit :: Parser Char
 charLit = between (symbol "\'") (symbol "\'") L.charLiteral
+
+stringLit :: Parser String
+stringLit = char '\"' *> manyTill L.charLiteral (char '\"')
 
 integer :: Parser Integer
 integer = lexeme L.decimal

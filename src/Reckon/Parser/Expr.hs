@@ -24,7 +24,7 @@ term ::Parser Expr
 term = try floating
    <|> try int
    <|> try rchar
---   <|> try rstring
+   <|> try rstring
    <|> try list
    <|> variable
    <|> try (parens operator)

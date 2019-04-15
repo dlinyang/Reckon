@@ -9,7 +9,6 @@ main :: IO ()
 main = hspec $ do
     varTest
 
---    opTest
+    opTest
     
---    partternTest
-    
+    partternTest

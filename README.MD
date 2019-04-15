@@ -1,6 +1,6 @@
 # The Reckon Programming Language
 
-![icon](reckon.png) 
+![icon](reckon.png)
 
 -----
 
