@@ -109,7 +109,7 @@ ifExpr = do
 
 parttern :: Parser Expr --bugs:multy indent 
 parttern = do
-  (var,exprs) <- L.nonIndented scn (L.indentBlock sc p)
+  (var,exprs) <- L.nonIndented scn (L.indentBlock scn p)
   return $ Parttern var exprs
   where
     p = do

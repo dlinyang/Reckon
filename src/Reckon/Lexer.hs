@@ -93,6 +93,10 @@ scn = L.space space1 lineComment blockComment
 
 -- -------------------------------------------------------------------------------------------------
 
--- lookahead symol for match string 
+-- lookahead symol for match string
+--lookAhead :: MonadParsec e s f => f a -> f Bool
 lookAheadMatch p = isJust <$> lookAhead (optional p)
+
+--indent :: MonadParsec e s f => f Int
+--indent = unPos . sourceColumn <$> getSourcePos
 

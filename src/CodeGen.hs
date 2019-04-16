@@ -42,3 +42,33 @@ newtype Codegen a = Codegen { runCodegen :: State CodegenState a}
     deriving (Functor,Applicative,Monad,MonadState CodegenState)
 
 newtype LLVM a = LLVM (State AST.Module)
+
+runLLVM :: AST.Module -> LLVM a -> AST.Module
+runLLVM mod (LLVM m) = execState m mod
+
+emptyModule :: String -> AST.Module
+emptyModule label = defaultModule { moduleName = label}
+
+addDefn :: Definition -> LLVM
+addDefn d = do
+    defs <- gets moduleDefinitions
+    modify $ \s -> s {moduleDefinitions = defs ++ [d]}
+
+define :: Type -> String -> [(Type,Name)] -> [BasicBlock] -> LLVM ()
+define retty label argtys body = addDefn $
+    GlobalDefinition $ functionDefaults{
+        name       = Name label
+      , parameters = ([Parameter ty nm []|(ty , nm) <- argtys],False)
+      , returnType = retty
+      , basicBlocks = body
+    }
+
+external :: Type -> String -> [(Type,Name)] -> LLVM ()
+external retty label argtys = addDefn $
+    GlobalDefinition $ functionDefaults {
+        name       = Name label
+      , linkage    = L.External
+      , parameters = ([Parameter ty nm []|(ty , nm) <- argtys],False)
+      , returnType = retty
+      , basicBlocks = []
+    }
