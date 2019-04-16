@@ -5,17 +5,34 @@ import Control.Monad.Combinators
 import Control.Monad.Combinators.Expr
 import Data.Void
 import Data.Char
+import Data.Maybe
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
 type Parser = Parsec Void String
 
-scn::Parser ()
-scn = L.space space1 lineComment blockComment
-
 lineComment = L.skipLineComment "--"
 blockComment = L.skipBlockComment "{-" "-}"
+
+reservedWords' :: [String]
+reservedWords' = ["let","if","then","else","case","of","where","do",
+                  "abstract","concrete","Cat",
+                  "import","export","module","hiding","syntax","foreign"]
+
+opChars :: String
+opChars = ":!#$%*+./<=>/@\\^|-~"
+
+opLetter = oneOf opChars
+
+reservedOp' :: [String]
+reservedOp' = [":",".","\\","->","=>","=",":=","|",",", --
+               "+","-","*","/","%"]                     --
+
+cmmnt :: [String]
+cmmnt = ["--","{-","-}"]
+
+-------------------------------------------------lexer----------------------------------------------
 
 sc :: Parser ()
 sc = L.space (void $ some (char ' ' <|> char '\t')) lineComment blockComment
@@ -47,25 +64,8 @@ integer = lexeme L.decimal
 float :: Parser Float
 float = lexeme L.float
 
-reservedWords' :: [String]
-reservedWords' = ["let","if","then","else","case","of","where","do",
-                  "abstract","concrete","Cat",
-                  "import","export","module","hiding","syntax","foreign"]
-
 reservedWords :: String -> Parser ()
 reservedWords w = (lexeme.try) (string w *> notFollowedBy alphaNumChar)
-
-opChars :: String
-opChars = ":!#$%*+./<=>/@\\^|-~"
-
-opLetter = oneOf opChars
-
-reservedOp' :: [String]
-reservedOp' = [":",".","\\","->","=>","=",":=","|",",", --
-               "+","-","*","/","%"]                     --
-
-cmmnt :: [String]
-cmmnt = ["--","{-","-}"]
 
 reservedOp :: String -> Parser ()
 reservedOp op = (lexeme . try) (string  op *> notFollowedBy opLetter)
@@ -85,3 +85,14 @@ identifier = (lexeme . try) (p >>= check)
     check x = if x `elem` reservedWords'
                 then fail $ "keyword " ++ show x ++ " cannot be an identifier"
                 else return x
+
+-----------------------------------------layout lexer------------------------------------------- 
+scn::Parser ()
+scn = L.space space1 lineComment blockComment
+
+
+-- -------------------------------------------------------------------------------------------------
+
+-- lookahead symol for match string 
+lookAheadMatch p = isJust <$> lookAhead (optional p)
+

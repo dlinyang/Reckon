@@ -40,7 +40,7 @@ operator = Var <$> symbolicOp
 
 prefixFun :: Parser Expr
 prefixFun = variable
-        <|> parens operator
+    <|> parens operator
 
 infixFun :: Parser Expr
 infixFun = operator
@@ -64,8 +64,9 @@ infixApp :: Parser Expr
 infixApp = makeExprParser term operatorTable
 
 operatorTable :: [[Operator Parser Expr]]
-operatorTable =[map infixlOp opll) ++ [InfixL (infixFun' <$> infixFun)]]
+operatorTable =[map infixlOp opll ++ [InfixL (infixFun' <$> infixFun)]]
 
+--prime function operators to operators table
 opll = [(Plus,"+"),(Minus,"-"),(Times,"*"),(Divide,"/"),(Mod,"%")] -- left associated operators list
 
 infixlOp (opn,opc)  = InfixL (binary opn opc)
@@ -74,7 +75,11 @@ binary opn opc = Op <$> primeFun opn opc
 
 primeFun opname opchar= opname <$ reservedOp opchar
 
+-- symbilic operators to operators table
 infixFun' op x  = Ap (Ap op x) 
+
+-- , oparetor to operators table
+
 
 lambda :: Parser Expr --lambda expresion
 lambda = do
@@ -104,14 +109,14 @@ ifExpr = do
 
 parttern :: Parser Expr --bugs:multy indent 
 parttern = do
-  (expra,exprs) <-  L.nonIndented scn (L.indentBlock sc p)
-  return $ Parttern expra exprs
+  (var,exprs) <- L.nonIndented scn (L.indentBlock sc p)
+  return $ Parttern var exprs
   where
     p = do
-      reservedWords "case"
-      body <- term
-      reservedOp "of"
-      return (L.IndentMany Nothing (return  . (body,)) parttern')
+        reservedWords "case"
+        var <- term
+        reservedWords "of"
+        return (L.IndentSome Nothing (return . (var,)) parttern')
 
 parttern' :: Parser (Expr,Expr)
 parttern' = do
@@ -121,7 +126,7 @@ parttern' = do
   return (expra,exprb)
 
 doExpr :: Parser Expr
-doExpr = do
+doExpr =do
   reservedWords "do"
-  exprs <- many expr
+  exprs <- many (parens expr)
   return $ Do exprs

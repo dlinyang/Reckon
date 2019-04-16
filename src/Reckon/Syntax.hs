@@ -42,7 +42,7 @@ data PrimeFun
 data Decl 
     = FunDecl Expr [Expr] Expr -- Variable:Function Variable:Parameter = body
     | TypeDecl Name Type
-    | TypeConsDecl Type Cons
+    | TypeConsDecl Name Cons
     | ModuleDecl Modecl  
     deriving (Eq,Ord,Show)
 
@@ -52,7 +52,7 @@ data Type
     deriving (Eq,Ord,Show)
 
 data Cons
-    = N Name 
+    = N Name [Type]
     | GADT Decl
     deriving (Eq,Ord,Show)
 

@@ -14,11 +14,17 @@ opTest = describe "operator parser" $do
     it "return a op AST" $
         parse operator "" ">=" `shouldParse` Var ">="
 
+ifTest = describe "condition paser" $ do
+    it "return a condition AST" $
+        parse ifExpr "" "if a then b else c" `shouldParse` If (Var "a") (Var "b") (Var "c")
+    it "return a condition AST" $
+        parse ifExpr "" "if a\n\tthen b\n\telse c" `shouldParse` If (Var "a") (Var "b") (Var "c")
+
 partternTest = describe "parttern case" $do
     it "return a case AST"$
-        parse parttern "" "case x of\n\tx >= 1 => 1" `shouldParse` 
+        parse parttern "" "case x of\n x >= 1 => 1" `shouldParse` 
         Parttern (Var "x") [(Ap (Ap (Var ">=") (Var "x")) (Literal (RInteger 1)),Literal (RInteger 1))]
     it "return a case AST"$
-        parse parttern "" "case x of\n\tx >= 1 => 1\n\tx < 1 => 0" `shouldParse`
+        parse parttern "" "case x of\n  x >= 1 => 1\n  x < 1 => 0" `shouldParse`
         Parttern (Var "x") [(Ap (Ap (Var ">=") (Var "x")) (Literal (RInteger 1)),Literal (RInteger 1)),
                             (Ap (Ap (Var "<")  (Var "x")) (Literal (RInteger 1)),Literal (RInteger 0))]

@@ -8,6 +8,7 @@ import Reckon.Lexer
 import Reckon.Parser.Decl
 import Reckon.Parser.Expr
 import Text.Megaparsec
+import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
 statement :: Parser Stmt
@@ -17,6 +18,7 @@ statement = (D <$> declare)
 
 contens :: Parser a -> Parser a
 contens p = do
+  space
   r <- p
   eof
   return r

@@ -10,5 +10,7 @@ main = hspec $ do
     varTest
 
     opTest
+
+    ifTest
     
     partternTest

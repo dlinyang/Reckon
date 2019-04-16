@@ -1,12 +1,12 @@
 {-# LANGUAGE GADTs #-}
 module Core.Category where
 
-newtype Name = String
+type Name = String
 
 data Cat where
-    Object::Name
-    Morphism::Cat -> Cat
-    deriving (Ord,Eq,Show,MetaCat,Cartesian)
+    Object  :: Cat
+    Morphism:: Cat -> Cat
+    deriving (Ord,Eq,Show)
 
 class MetaCat a where
     id :: a -> a
@@ -22,23 +22,23 @@ instance MetaCat Cat where
 
 class Cartesian a where
     (×) :: b -> c -> a
-    p1   :: a -> b
-    p2   :: a -> c
+    π1  :: a -> b
+    π2  :: a -> c
 
 cartesianProduct a b = (a,b)
 
 instance Cartesian Cat where
     (×) = cartesianProduct
-    p1 = fst 
-    p2 = snd
+    π1 = fst 
+    π2 = snd
 
 data CExpr 
     = Var Name Cat
-    | Lam [Name Cat] CExpr
+    | Lam [(Name,Cat)] CExpr
     | Let Name Cat CExpr
     | App Name Cat CExpr
     | Comb CExpr CExpr
-    deriving (Ord,Eq,Show,Deduction)
+    deriving (Ord,Eq,Show)
 
 class Deduction a where
     eliminate :: a -> a
