@@ -3,10 +3,12 @@ module Core.Category where
 
 type Name = String
 
-data Cat where
-    Object  :: Cat
-    Morphism:: Cat -> Cat
+data Cat a where
+    Object  :: Cat a
+    Morphism:: Cat a -> Cat a
     deriving (Ord,Eq,Show)
+
+type Type = Cat Name
 
 class MetaCat a where
     id :: a -> a
@@ -14,9 +16,9 @@ class MetaCat a where
     dom:: a -> a
     cod:: a-> a
 
-instance MetaCat Cat where
+instance MetaCat Cat a where
     id a =  a
-    composition f g h = (f g) h
+    composition (Morphism x y) (Morphism y z)  = (Morphism x z)
     dom Morphism x y = x
     cod Morphism x y = y
 
@@ -25,20 +27,23 @@ class Cartesian a where
     π1  :: a -> b
     π2  :: a -> c
 
-cartesianProduct a b = (a,b)
+instance Cartesian Cat a where
+    (×) （Cat a) (Cat b) = (Cat a,Cat b)
+    π1 (Cat a,Cat b)     = Cat a  
+    π2 (Cat a,Cat b)     = Cat b
 
-instance Cartesian Cat where
-    (×) = cartesianProduct
-    π1 = fst 
-    π2 = snd
-
-data CExpr 
-    = Var Name Cat
-    | Lam [(Name,Cat)] CExpr
-    | Let Name Cat CExpr
-    | App Name Cat CExpr
-    | Comb CExpr CExpr
+data Λ 
+    = Var Name Type
+    | Lam [(Name,Type)] Λ
+    | Let Name Type Λ
+    | App Name Type Λ
+    | Comb Λ Λ
     deriving (Ord,Eq,Show)
 
 class Deduction a where
-    eliminate :: a -> a
+    introduct :: a -> a
+    eliminate :: a -> a -> a
+
+instance Deduction Λ where
+    introduct (Var Name Type) = (Var Name Type)
+    eliminate ()

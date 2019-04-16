@@ -10,10 +10,4 @@ main :: IO ()
 main = hspec $ do
     declarationTest
 
-    varTest
-
-    opTest
-
-    ifTest
-    
-    partternTest
+    exprTest

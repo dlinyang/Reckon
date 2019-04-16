@@ -19,7 +19,7 @@ data Expr
     | Lambda [Name] Expr -- lambda expression
     | Let Expr Expr -- variable binding
     | If Expr  Expr  Expr
-    | Parttern Expr [(Expr,Expr)]
+    | Case Expr [(Expr,Expr)]
     | Do [Expr] 
     deriving (Eq,Ord,Show)
 

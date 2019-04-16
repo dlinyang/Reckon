@@ -32,7 +32,7 @@ reservedOp' = [":",".","\\","->","=>","=",":=","|",",", --
 cmmnt :: [String]
 cmmnt = ["--","{-","-}"]
 
--------------------------------------------------lexer----------------------------------------------
+-----------------------------------------------lexer----------------------------------------------
 
 sc :: Parser ()
 sc = L.space (void $ some (char ' ' <|> char '\t')) lineComment blockComment
@@ -90,7 +90,8 @@ identifier = (lexeme . try) (p >>= check)
 scn::Parser ()
 scn = L.space space1 lineComment blockComment
 
-
+lexemeL :: Parser a -> Parser a
+lexemeL = L.lexeme scn
 -- -------------------------------------------------------------------------------------------------
 
 -- lookahead symol for match string

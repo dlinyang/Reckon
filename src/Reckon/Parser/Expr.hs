@@ -16,7 +16,7 @@ expr = try application
    <|> lambda
    <|> letExpr
    <|> ifExpr
-   <|> parttern
+   <|> caseExpr
    <|> doExpr
    <?> "expresion"
 
@@ -107,19 +107,19 @@ ifExpr = do
   exprc <- expr
   return $ If expra exprb exprc
 
-parttern :: Parser Expr --bugs:multy indent 
-parttern = do
+caseExpr :: Parser Expr --bugs:multy indent 
+caseExpr = do
   (var,exprs) <- L.nonIndented scn (L.indentBlock scn p)
-  return $ Parttern var exprs
+  return $ Case var exprs
   where
     p = do
         reservedWords "case"
         var <- term
         reservedWords "of"
-        return (L.IndentSome Nothing (return . (var,)) parttern')
+        return (L.IndentSome Nothing (return . (var,)) caseExpr')
 
-parttern' :: Parser (Expr,Expr)
-parttern' = do
+caseExpr' :: Parser (Expr,Expr)
+caseExpr' = do
   expra <- expr
   reservedOp "=>"
   exprb <- expr
