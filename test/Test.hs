@@ -10,4 +10,4 @@ main :: IO ()
 main = hspec $ do
     declarationTest
 
-    exprTest
+    exprresionTest

@@ -6,7 +6,7 @@ import Text.Megaparsec
 import Test.Hspec
 import Test.Hspec.Megaparsec
 
-exprTest = do
+exprresionTest = do
     varTest
     opTest
     ifTest
@@ -24,7 +24,7 @@ ifTest = describe "condition parser" $ do
     it "return a condition AST" $
         parse ifExpr "" "if a then b else c" `shouldParse` If (Var "a") (Var "b") (Var "c")
     it "return a condition AST" $
-        parse ifExpr "" "if a\n\tthen b\n\telse c" `shouldParse` If (Var "a") (Var "b") (Var "c")
+        parse ifExpr "" "if a\tthen b\telse c" `shouldParse` If (Var "a") (Var "b") (Var "c")
 
 caseExprTest = describe "case expr parser" $do
     it "return a case AST"$

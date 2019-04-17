@@ -36,14 +36,15 @@ data Λ
     = Var Name Type
     | Lam [(Name,Type)] Λ
     | Let Name Type Λ
-    | App Name Type Λ
+    | App  Λ Λ
     | Comb Λ Λ
     deriving (Ord,Eq,Show)
 
 class Deduction a where
-    introduct :: a -> a
+    introduct :: a -> a -> a
     eliminate :: a -> a -> a
 
 instance Deduction Λ where
-    introduct (Var Name Type) = (Var Name Type)
-    eliminate ()
+    introduct (Var a b) (Var c d)= Lam [(Var a b)] (Var c d)
+    eliminate (App a b) (App b c)= App a c
+    eliminate  ()
