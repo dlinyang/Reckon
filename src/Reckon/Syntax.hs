@@ -31,7 +31,6 @@ data Lit
     | List [Lit]
     deriving (Eq,Ord,Show)
 
-
 data PrimeFun
     = Cons |App | Head | Tail -- list operator
     | Def | Ty -- (=) :

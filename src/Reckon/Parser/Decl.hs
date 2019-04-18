@@ -1,5 +1,4 @@
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
-{-# LANGUAGE TupleSections #-}
 module Reckon.Parser.Decl where
 
 import Reckon.Syntax
