@@ -19,25 +19,22 @@ declare = try funDecl
 funDecl :: Parser Decl
 funDecl = do
   name <- identifier
-  arg  <- many term
+  args  <- many term
   reservedOp "="
-  body <- expr 
-  return $ FunDecl (Var name) arg body
+  FunDecl (Var name) args <$> expr
 
 opDecl :: Parser Decl
 opDecl = do
-  name <- parens operator
-  arg <- many term
+  op <- parens operator
+  args <- many term
   reservedOp "="
-  body <- expr
-  return $ FunDecl (name) arg body
+  FunDecl op args <$> expr
 
 typeDecl :: Parser Decl --bug:wait fix
 typeDecl = do
   name <- identifier
   reservedOp ":"
-  ty <- rtype
-  return $ TypeDecl name ty
+  TypeDecl name <$> rtype
 
 rtype = makeExprParser rtypeTerm [[InfixL (TT <$ reservedOp "->")]]
 
@@ -54,14 +51,12 @@ modDecl = modDef
 modDef :: Parser Decl
 modDef = do
   reservedWords "module"
-  name <- identifier
-  return $ ModuleDecl (MDef name)
+  ModuleDecl . MDef <$> identifier
 
 modImp :: Parser Decl
 modImp = do
   reservedWords "import"
-  name <- identifier
-  return $ ModuleDecl (MImp name)
+  ModuleDecl . MImp <$> identifier
 
 modExp :: Parser Decl
 modExp = do

@@ -42,6 +42,9 @@ prefixFun :: Parser Expr
 prefixFun = variable
     <|> parens operator
 
+--reservedPrefixFun ::  String -> Parser Expr
+--reservedPrefixFun = parens reservedOp
+
 infixFun :: Parser Expr
 infixFun = operator
        <|> accent variable 
@@ -57,14 +60,15 @@ prefixApp = do
   return $ curry fun args
   where 
     curry fun (arg:args) = curry' (Ap fun arg) args
-    curry' ap [] = ap
-    curry' ap (arg:args) = curry' (Ap ap arg) args
+    curry'  =  foldl Ap 
 
 infixApp :: Parser Expr
 infixApp = makeExprParser term operatorTable
 
 operatorTable :: [[Operator Parser Expr]]
-operatorTable =[map infixlOp opll ++ [InfixL (infixFun' <$> infixFun)]]
+operatorTable =[map infixlOp opll ++ [InfixL (infixFun' <$> infixFun)]
+               --,[Infix]
+                ]
 
 --prime function operators to operators table
 opll = [(Plus,"+"),(Minus,"-"),(Times,"*"),(Divide,"/"),(Mod,"%")] -- left associated operators list
@@ -86,26 +90,23 @@ lambda = do
   symbol "\\"
   name <- many identifier
   symbol "."
-  expra <- expr
-  return $ Lambda name expra
+  Lambda name <$> expr
 
 letExpr :: Parser Expr
 letExpr = do 
   reservedWords "let"
-  expra <- expr
+  bind <- expr
   reservedOp "="
-  exprb <- expr
-  return $ Let  expra exprb
+  Let  bind <$> expr
 
 ifExpr :: Parser Expr
 ifExpr = do 
   reservedWords "if"
-  expra <- expr
+  condition <- expr
   reservedWords "then"
-  exprb <- expr
+  ture <- expr
   reservedWords "else"
-  exprc <- expr
-  return $ If expra exprb exprc
+  If condition ture <$> expr
 
 caseExpr :: Parser Expr --bugs:multy indent 
 caseExpr = do
@@ -116,10 +117,10 @@ caseExpr = do
         reservedWords "case"
         var <- term
         reservedWords "of"
-        return (L.IndentSome Nothing (return . (var,)) caseExpr')
+        return (L.IndentSome Nothing (return . (var,)) caseExprBody)
 
-caseExpr' :: Parser (Expr,Expr)
-caseExpr' = do
+caseExprBody :: Parser (Expr,Expr)
+caseExprBody = do
   expra <- expr
   reservedOp "=>"
   exprb <- expr
@@ -128,5 +129,9 @@ caseExpr' = do
 doExpr :: Parser Expr
 doExpr =do
   reservedWords "do"
-  exprs <- many (parens expr)
+--  l <- lookAheadMath  (symbol "(")
+  exprs <- L.nonIndented scn (L.indentBlock scn body)
   return $ Do exprs
+  where 
+    body = return $ L.IndentSome Nothing return expr
+
