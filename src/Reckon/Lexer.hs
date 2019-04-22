@@ -52,18 +52,6 @@ brackets = between (symbol "[") (symbol "]")
 accent :: Parser a -> Parser a
 accent = between (symbol "`") (symbol "`")
 
-charLit :: Parser Char
-charLit = between (symbol "\'") (symbol "\'") L.charLiteral
-
-stringLit :: Parser String
-stringLit = char '\"' *> manyTill L.charLiteral (char '\"')
-
-integer :: Parser Integer
-integer = lexeme L.decimal
-
-float :: Parser Float
-float = lexeme L.float
-
 reservedWords :: String -> Parser ()
 reservedWords w = (lexeme.try) (string w *> notFollowedBy alphaNumChar)
 
@@ -86,9 +74,32 @@ identifier = (lexeme . try) (p >>= check)
                 then fail $ "keyword " ++ show x ++ " cannot be an identifier"
                 else return x
 
-              
+typeName :: Parser String
+typeName = (lexeme .try) (p >>= check)               
+  where
+    p       = (:) <$> upperChar <*> many alphaNumChar
+    check x = if x `elem` reservedWords'
+      then fail $ "keyword" ++ show x ++ " cannot be an identifer of type"
+      else return x
 
+variableName :: Parser String
+variableName = (lexeme . try) (p >>= check)
+  where
+    p       = (:) <$> lowerChar <*> many alphaNumChar
+    check x = if x `elem` reservedWords'
+                then fail $ "keyword " ++ show x ++ " cannot be an identifier of variable"
+                else return x
+
+kindName :: Parser String
+kind = (lexeme . try) (p >>= check)
+  where
+    p       = (:) <$> lowerChar <*> many alphaNumChar
+    check x = if x `elem` reservedWords'
+                then fail $ "keyword " ++ show x ++ " cannot be an identifier of kind"
+                else return x
+                
 -----------------------------------------layout lexer------------------------------------------- 
+
 scn::Parser ()
 scn = L.space space1 lineComment blockComment
 

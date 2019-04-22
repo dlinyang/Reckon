@@ -50,15 +50,15 @@ modDecl = modDef
 modDef :: Parser Decl
 modDef = do
   reservedWords "module"
-  ModuleDecl . MDef <$> identifier
+  ModuleDecl . ModuleDefine <$> identifier
 
 modImp :: Parser Decl
 modImp = do
   reservedWords "import"
-  ModuleDecl . MImp <$> identifier
+  ModuleDecl . ModuleImport <$> identifier
 
 modExp :: Parser Decl
 modExp = do
   reservedWords "export"
   names <- parens (many identifier)
-  return $ ModuleDecl (MExp names)
+  return $ ModuleDecl (ModuleExport names)

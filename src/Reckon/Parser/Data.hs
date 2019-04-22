@@ -3,53 +3,38 @@ module Reckon.Parser.Data where
 import Reckon.Syntax
 import Reckon.Lexer
 import Text.Megaparsec
+import Text.Megaparsec.Char
+import Text.Megaparsec.Char.Lexer as L hiding(lexeme,symbol)
+
+literal :: Parser Expr
+literal = try integer
+      <|> try floating
+      <|> try rchar
+      <|> try rstring
 
 --parse the integer
-int :: Parser Expr 
-int = Literal  <$> int' 
-
-int' :: Parser Lit
-int' = RInteger <$> integer <?> "int"
+integer :: Parser Expr 
+integer = Literal . RInteger <$> integerLit <?> "int"
 
 --parse the float
 floating :: Parser Expr
-floating = Literal  <$> floating'
-
-floating' :: Parser Lit
-floating' = RFloat <$> float <?> "float"
+floating = Literal . RFloat <$> float <?> "float"
 
 rchar :: Parser Expr
-rchar = Literal <$> rchar'
-
-rchar' :: Parser Lit
-rchar' = RChar <$> charLit <?> "char"
+rchar = Literal . RChar <$> charLit <?> "char"
 
 rstring :: Parser Expr
-rstring = Literal <$> rstring'
+rstring = Literal . RString <$> stringLit <?> "string"
 
-rstring' :: Parser Lit 
-rstring' = RString <$> stringLit <?> "string"
+-- literal data value
+charLit :: Parser Char
+charLit = between (symbol "\'") (symbol "\'") L.charLiteral
 
-lit :: Parser Lit
-lit  = try int'
-   <|> try floating'
-   <|> try rchar'
-   <|> try list'
-   <|> try rstring'
+stringLit :: Parser String
+stringLit = char '\"' *> manyTill L.charLiteral (char '\"')
 
+integerLit :: Parser Integer
+integerLit = lexeme L.decimal
 
-llit :: Parser Lit
-llit = do
-  reservedOp ","
-  l <- lit
-  return l
-
-
-list :: Parser Expr
-list = Literal <$> list'
-
-list' :: Parser Lit --bug:wait fix
-list' = brackets $ do
-  h <- lit
-  t <- many llit
-  return $ List ([h] ++ t)
+floatLit :: Parser Float
+floatLit = lexeme L.float

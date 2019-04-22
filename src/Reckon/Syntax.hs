@@ -12,7 +12,8 @@ data Stmt
 data Expr 
     = Var Name --bound variable
     | Literal Lit --element
-    | ListE [Expr]
+    | List [Expr]
+    | Set [Expr]
     | TypeE Type
     | Op PrimeFun Expr Expr -- axiom
     | Ap Expr Expr --application
@@ -28,7 +29,6 @@ data Lit
     | RFloat Float
     | RChar Char
     | RString String
-    | List [Lit]
     deriving (Eq,Ord,Show)
 
 data PrimeFun
@@ -56,7 +56,7 @@ data Cons
     deriving (Eq,Ord,Show)
 
 data Modecl
-    = MDef Name
-    | MImp Name
-    | MExp [Name]
+    = ModuleDefine Name
+    | ModuleImport Name
+    | ModuleExport [Name]
     deriving (Eq,Ord,Show)

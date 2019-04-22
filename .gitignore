@@ -1,2 +1,9 @@
 ## dist file
 dist
+
+## latex compile file
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz

@@ -21,11 +21,7 @@ expr = try application
    <?> "expresion"
 
 term ::Parser Expr
-term = try floating
-   <|> try int
-   <|> try rchar
-   <|> try rstring
-   <|> try list
+term = try literal
    <|> variable
    <|> try (parens operator)
    <|> parens expr
@@ -66,16 +62,17 @@ infixApp :: Parser Expr
 infixApp = makeExprParser term operatorTable
 
 operatorTable :: [[Operator Parser Expr]]
-operatorTable =[map infixlOp opll ++ [InfixL (infixFun' <$> infixFun)]
+operatorTable =[[infixlOp Times "*"
+                ,infixlOp Divide "/"]
+               ,[infixlOp Plus "+"
+                ,infixlOp Minus "-"]
+               ,[InfixL (infixFun' <$> infixFun)]
                --,[Infix]
                 ]
 
 --prime function operators to operators table
-opll = [(Plus,"+"),(Minus,"-"),(Times,"*"),(Divide,"/"),(Mod,"%")] -- left associated operators list
 
-infixlOp (opn,opc)  = InfixL (binary opn opc)
-
-binary opn opc = Op <$> primeFun opn opc 
+infixlOp opn opc  = InfixL (Op <$> primeFun opn opc )
 
 primeFun opname opchar= opname <$ reservedOp opchar
 
@@ -134,4 +131,3 @@ doExpr =do
   return $ Do exprs
   where 
     body = return $ L.IndentSome Nothing return expr
-
