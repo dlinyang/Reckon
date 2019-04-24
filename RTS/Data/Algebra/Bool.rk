@@ -1,0 +1,11 @@
+module Data.Algebra.Bool
+
+export (Bool)
+
+Bool := True 
+      | False 
+
+abstract Eq a where
+    (∨) :: a -> a -> Bool
+    (∧) :: a -> a -> Bool
+

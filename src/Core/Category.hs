@@ -1,14 +1,17 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE UnicodeSyntax #-}
+
 module Core.Category where
 
 type Name = String
 
-data Cat a where
-    Object   ∷ a → Cat a
-    Morphism ∷ Cat a → Cat a → Cat a
+data 𝒞 a where -- category
+    Object   ∷ a → 𝒞 a -- Obj𝒞 
+    Morphism ∷ 𝒞 a → 𝒞 a → 𝒞 a -- A → B 
     deriving (Show)
+
+type Cat a = 𝒞 a
 
 class MetaCat a where
     id :: a → a
@@ -16,29 +19,28 @@ class MetaCat a where
     dom:: a → a
     cod:: a → a
 
-
 class Cartesian a where
     (×) ∷ a → a → (a,a)
     x × y = (x,y)
 
-    π1 ∷ (a,a) → a
-    π1 = fst
+    π₁ ∷ (a,a) → a
+    π₁ = fst
 
-    π2 ∷ (a,a) → a
-    π2  = snd
+    π₂ ∷ (a,a) → a
+    π₂  = snd
 
-instance MetaCat (Cat a) where
+instance MetaCat (𝒞 a) where
     id x =  x
     composition (Morphism x y) (Morphism i j) = Morphism x j
     dom (Morphism x y) = x
     cod (Morphism x y) = y
 
-instance Cartesian (Cat a) where
+instance Cartesian (𝒞 a) where
     x × y = (x,y)
-    π1 (x,y) = x
-    π2 (x,y) = y
+    π₁ (x,y) = x
+    π₂ (x,y) = y
 
-type Type = Cat Name
+type Type = 𝒞 Name
 
 data Λ 
     = Var Name Type
@@ -48,9 +50,16 @@ data Λ
     | Comb Λ Λ
 
 class Deduction a where
-    introduct ∷ a → a → a
-    eliminate ∷ a → a → a
-{- 
+    introduction ∷ a → a → a
+    elimination  ∷ a → a → a
+
 instance Deduction Λ where
-    introduct (Var a b) (Var c d)= Abs [(a,b)] (Var c d)
-    eliminate (App a b) (App c d)= App a c -}
+    introduction (Var a b) (Var c d)= Abs [(a,b)] (Var c d)
+    introduction a b = Comb a b
+    elimination (App a b) (App c d)= App a c 
+    elimination a b = Comb a b
+
+class  Relation a b c where
+    reflextive :: (a -> a) -> (a -> a)
+    transitive :: (a -> b) -> (b -> c) -> c
+    symetric   :: (a -> b) -> (b -> a)

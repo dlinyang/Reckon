@@ -22,12 +22,20 @@ expr = try application
 
 term ::Parser Expr
 term = try literal
+   <|> list
+   <|> set
+   <|> typeNotation
    <|> variable
    <|> try (parens operator)
    <|> parens expr
    <?> "terms" 
 
+list :: Parser Expr
 
+set :: Parser Expr
+
+typeNotation :: Parser Expr
+ 
 variable :: Parser Expr
 variable = Var <$> identifier <?> "variable"
 
@@ -84,7 +92,7 @@ infixFun' op x  = Ap (Ap op x)
 
 lambda :: Parser Expr --lambda expresion
 lambda = do
-  symbol "\\"
+  reservedOp "\\" <|> reservedOp "λ"
   name <- many identifier
   symbol "."
   Lambda name <$> expr
@@ -119,7 +127,7 @@ caseExpr = do
 caseExprBody :: Parser (Expr,Expr)
 caseExprBody = do
   expra <- expr
-  reservedOp "=>"
+  reservedOp "=>" <|> reservedOp "⇒"
   exprb <- expr
   return (expra,exprb)
 

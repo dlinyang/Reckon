@@ -12,7 +12,7 @@ declare :: Parser Decl --parse declare
 declare = try funDecl
       <|> try opDecl 
       <|> try typeDecl 
-      <|> modDecl
+      <|> moduleDecl
       <?> "declare"
 
 funDecl :: Parser Decl
@@ -35,30 +35,30 @@ typeDecl = do
   reservedOp ":"
   TypeDecl name <$> rtype
 
-rtype = makeExprParser rtypeTerm [[InfixL (TT <$ reservedOp "->")]]
+rtype = makeExprParser rtypeTerm [[InfixL (TT <$ (reservedOp "->" <|> reservedOp "→"))]]
 
 rtypeTerm = rtypec
-     <|> parens rtype
+        <|> parens rtype
 
 rtypec = TC <$> identifier
 
-modDecl :: Parser Decl
-modDecl = modDef
-      <|> modImp
-      <|> modExp
+moduleDecl :: Parser Decl
+moduleDecl = moduleDefine
+         <|> moduleImport
+         <|> moduleExport
 
-modDef :: Parser Decl
-modDef = do
+moduleDefine :: Parser Decl
+moduleDefine = do
   reservedWords "module"
   ModuleDecl . ModuleDefine <$> identifier
 
-modImp :: Parser Decl
-modImp = do
+moduleImport :: Parser Decl
+moduleImport = do
   reservedWords "import"
   ModuleDecl . ModuleImport <$> identifier
 
-modExp :: Parser Decl
-modExp = do
+moduleExport :: Parser Decl
+moduleExport = do
   reservedWords "export"
   names <- parens (many identifier)
   return $ ModuleDecl (ModuleExport names)

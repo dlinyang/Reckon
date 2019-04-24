@@ -17,7 +17,7 @@ blockComment = L.skipBlockComment "{-" "-}"
 
 reservedWords' :: [String]
 reservedWords' = ["let","if","then","else","case","of","where","do",
-                  "abstract","concrete","Cat",
+                  "abstract","concrete","Cat","forall","exists",
                   "import","export","module","hiding","syntax","foreign"]
 
 opChars :: String
@@ -26,8 +26,10 @@ opChars = ":!#$%*+./<=>/@\\^|-~"
 opLetter = oneOf opChars
 
 reservedOp' :: [String]
-reservedOp' = [":",".","\\","->","=>","=",":=","|",",", --
-               "+","-","*","/","%"]                     --
+reservedOp' = [":",".","\\","->","<-""=>","-->","=",":=","|",",", ">>","<:","%%","&&", --
+               "∈","∀","∃", "λ","→","←","⇒","⟶","≔","⊂","⋂","⋃" ,   --unicode syntax 
+               "+","-","*","/","%","<",">","==",">=","=<","&","||",
+               "≡","≥","≤","∧","∨"]                    -- unicode operator
 
 cmmnt :: [String]
 cmmnt = ["--","{-","-}"]
@@ -91,7 +93,7 @@ variableName = (lexeme . try) (p >>= check)
                 else return x
 
 kindName :: Parser String
-kind = (lexeme . try) (p >>= check)
+kindName = (lexeme . try) (p >>= check)
   where
     p       = (:) <$> lowerChar <*> many alphaNumChar
     check x = if x `elem` reservedWords'

@@ -12,8 +12,8 @@ declarationTest = do
 
 importTest = describe "import package parser" $ do
     it "return a import module name" $
-      parse modImp "" "import Data" `shouldParse`  ModuleDecl (ModuleImport "Data")
+      parse moduleImport "" "import Data" `shouldParse`  ModuleDecl (ModuleImport "Data")
     
 exportTest = describe "export definition paser" $ do
     it "retunr export definition"$
-     parse modExp "" "export\t(sin)" `shouldParse` ModuleDecl (ModuleExport ["sin"])
+     parse moduleExport "" "export\t(sin)" `shouldParse` ModuleDecl (ModuleExport ["sin"])

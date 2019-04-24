@@ -14,7 +14,7 @@ data Expr
     | Literal Lit --element
     | List [Expr]
     | Set [Expr]
-    | TypeE Type
+    | TypeNotation Type
     | Op PrimeFun Expr Expr -- axiom
     | Ap Expr Expr --application
     | Lambda [Name] Expr -- lambda expression
@@ -33,9 +33,8 @@ data Lit
 
 data PrimeFun
     = Cons |App | Head | Tail -- list operator
-    | Def | Ty -- (=) :
     | Plus | Minus | Times | Divide | Mod -- 
-    | RAnd | ROr | RNot |REq -- 
+    | RAnd | ROr   |REq    | RNeq -- 
     deriving (Eq,Ord,Show)
 
 data Decl 

@@ -1,2 +1,3 @@
 module Prelude
-expotr()
+
+import Data.Algebra.Bool
